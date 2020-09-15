@@ -173,17 +173,38 @@ bool fightMonster(Monster &monster, Player &player) {
 	while (true) {
 		char answer;
 		//	бежать или драться с монстром?
-		while (true)
-		{
-			cout << "(R)un or (F)ight : ";
-			cin >> answer;
-			if ((cin.fail()) || ((answer != 'r') && (answer != 'R') && (answer != 'f') && (answer != 'F')))
+		if (player.getLevel() >= 5) {
+			while (true)
 			{
-				cin.clear();
-				cin.ignore(32767, '\n');
-				cout << "You entered something wrong, please answer again.\n";
+				cout << "(R)un, (H)it or use (M)agic : ";
+				cin >> answer;
+				if ((cin.fail()) || ((answer != 'r') && (answer != 'R') && (answer != 'h') && (answer != 'H')
+					&& (answer != 'm') && (answer != 'M')))
+				{
+					cin.clear();
+					cin.ignore(32767, '\n');
+					cout << "You entered something wrong, please answer again.\n";
+				}
+				else if ((answer == 'm') || (answer == 'M')) {
+					if (player.getMp() < 3)
+						cout << "You don't have enough mana to use magic now.\n";
+				}
+				else break;
 			}
-			else break;
+		}
+		else {
+			while (true)
+			{
+				cout << "(R)un or (F)ight : ";
+				cin >> answer;
+				if ((cin.fail()) || ((answer != 'r') && (answer != 'R') && (answer != 'f') && (answer != 'F')))
+				{
+					cin.clear();
+					cin.ignore(32767, '\n');
+					cout << "You entered something wrong, please answer again.\n";
+				}
+				else break;
+			}
 		}
 		//	игрок решил бежать, шанс убежать 50%
 		if (answer == 'r' || answer == 'R') {
@@ -201,29 +222,9 @@ bool fightMonster(Monster &monster, Player &player) {
 		else {
 
 			//	игрок решил драться
-			//	если игрок выше 5 уровня, он может атаковать магией
-			if (player.getLevel()>=5)
-				while (true)
-				{
-					cout << "(H)it or use (M)agic : ";
-					cin >> answer;
-					if ((cin.fail()) || ((answer != 'h') && (answer != 'H') && (answer != 'm') && (answer != 'M')))
-					{
-						cin.clear();
-						cin.ignore(32767, '\n');
-						cout << "You entered something wrong, please answer again.\n";
-					}
-					else break;
-				}
-
 			bool magic(false);
 			//	игрок выбрал атаку магией
-			if ((answer == 'm') || (answer == 'M')) {
-				if (player.getMp() < 3) 
-					cout << "You don't have enough mana to use magic now. You'll have to just hit monster as usual(\n";
-				else
-					magic = true;
-			}
+			if ((answer == 'm') || (answer == 'M')) { magic = true; }
 
 			//	1 атакует игрок, потом монстр
 			if (attackMonster(monster, player, magic)) return false; // монстр умер
